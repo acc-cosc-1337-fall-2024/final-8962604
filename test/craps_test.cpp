@@ -3,6 +3,9 @@
 #include "die.h"
 #include "roll.h"
 #include "shooter.h"
+#include "point_phase.h"
+#include "come_out_phase.h"
+#include "phase.h"
 
 
 TEST_CASE("Verify Test Configuration", "verification") {
@@ -49,5 +52,41 @@ TEST_CASE("Test for Shooter Roll (2 to 12)")
        
         REQUIRE(roll_value >= 2);  // Roll should be at least 2
         REQUIRE(roll_value <= 12); // Roll should be at most 12
+    }
+}
+TEST_CASE("Test for ComeOutPhase Outcomes")
+{
+    Come_Out_Phase comeOutPhase;
+    Die die1, die2; // Create dice objects
+
+    // Loop 10 times to test that get_outcome returns expected values
+    for (int i = 0; i < 10; ++i)
+    {
+        Roll roll(die1, die2); // Create a Roll object using dice
+        roll.roll_dice(); // Roll the dice to get random values
+        RollOutcome outcome = comeOutPhase.get_outcome(&roll); // Pass roll as a pointer
+       
+        REQUIRE(outcome == RollOutcome::natural ||
+                outcome == RollOutcome::craps ||
+                outcome == RollOutcome::point);
+    }
+}
+
+TEST_CASE("Test for PointPhase Outcomes")
+{
+    int initial_point = 4; // Example initial point
+    Point_Phase pointPhase(initial_point);
+    Die die1, die2; // Create dice objects
+
+    // Loop 10 times to test that get_outcome returns expected values
+    for (int i = 0; i < 10; ++i)
+    {
+        Roll roll(die1, die2); // Create a Roll object using dice
+        roll.roll_dice(); // Roll the dice to get random values
+        RollOutcome outcome = pointPhase.get_outcome(&roll); // Pass roll as a pointer
+       
+        REQUIRE(outcome == RollOutcome::point ||
+                outcome == RollOutcome::seven_out ||
+                outcome == RollOutcome::nopoint);
     }
 }
