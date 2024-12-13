@@ -90,3 +90,38 @@ TEST_CASE("Test for PointPhase Outcomes")
                 outcome == RollOutcome::nopoint);
     }
 }
+TEST_CASE("Complete End-to-End Test for Full Game Cycle (Shooter, ComeOutPhase, PointPhase)")
+{
+    Shooter shooter;
+    Come_Out_Phase comeOutPhase;
+    Die die1, die2; // Create dice objects for Roll
+   
+    // Simulate Shooter Roll (2 to 12)
+    Roll shooterRoll(die1, die2); // Shooter roll uses dice objects
+    shooterRoll.roll_dice(); // Roll the dice
+    int shooterRollValue = shooterRoll.get_total(); // Get total of both dice
+   
+    REQUIRE(shooterRollValue >= 2);  // Shooter roll should be at least 2
+    REQUIRE(shooterRollValue <= 12);  // Shooter roll should be at most 12
+   
+    // Simulate ComeOutPhase Outcome (natural, craps, or point)
+    RollOutcome comeOutOutcome = comeOutPhase.get_outcome(&shooterRoll); // Pass roll as a pointer
+    REQUIRE(comeOutOutcome == RollOutcome::natural ||
+            comeOutOutcome == RollOutcome::craps ||
+            comeOutOutcome == RollOutcome::point);
+   
+    // If ComeOutPhase results in a point, simulate PointPhase outcome
+    if (comeOutOutcome == RollOutcome::point)
+    {
+        int point = shooterRollValue; // Set the point to the shooter's roll value
+        Point_Phase pointPhase(point); // Initialize PointPhase with the point
+       
+        Roll pointRoll(die1, die2); // Create a Roll object for the point phase
+        pointRoll.roll_dice(); // Roll the dice
+        RollOutcome pointOutcome = pointPhase.get_outcome(&pointRoll); // Pass roll as a pointer
+       
+        REQUIRE(pointOutcome == RollOutcome::point ||
+                pointOutcome == RollOutcome::seven_out ||
+                pointOutcome == RollOutcome::nopoint);
+    }
+}
