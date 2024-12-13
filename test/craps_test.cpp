@@ -1,6 +1,9 @@
 #define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
 #include "catch.hpp"
-#include "die.cpp"
+#include "die.h"
+#include "roll.h"
+#include "shooter.h"
+
 
 TEST_CASE("Verify Test Configuration", "verification") {
 	REQUIRE(true == true);
@@ -30,5 +33,21 @@ TEST_CASE("Test for Sum of Two Die Rolls (2 to 12)")
        
         REQUIRE(sum >= 2);  // Sum should be at least 2
         REQUIRE(sum <= 12);  // Sum should be at most 12
+    }
+}
+TEST_CASE("Test for Shooter Roll (2 to 12)")
+{
+    Shooter shooter;
+    Die d1, d2; // Create two dice objects
+   
+    // Loop 10 times to test if the shooter roll result is between 2 and 12
+    for (int i = 0; i < 10; ++i)
+    {
+        // Use throw_dice to get a roll and retrieve the rolled value
+        std::unique_ptr<Roll> roll = shooter.throw_dice(d1, d2);
+        int roll_value = roll->roll_value(); // Assuming Roll has a roll_value() method
+       
+        REQUIRE(roll_value >= 2);  // Roll should be at least 2
+        REQUIRE(roll_value <= 12); // Roll should be at most 12
     }
 }
